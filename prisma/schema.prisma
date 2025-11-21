@@ -1,0 +1,202 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum CourseStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ResourceType {
+  VIDEO
+  PDF
+  LINK
+}
+
+model User {
+  id           String         @id @default(cuid())
+  name         String
+  email        String         @unique
+  passwordHash String
+  role         UserRole       @default(USER)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  profile        Profile?
+  courses        Course[]      @relation("CourseAuthor")
+  enrollments    Enrollment[]
+  posts          Post[]
+  comments       Comment[]
+  certifications Certification[]
+  followers      Follow[]      @relation("Following")
+  following      Follow[]      @relation("Follower")
+  postLikes      PostLike[]
+  lessonProgress LessonProgress[]
+}
+
+model Profile {
+  id        String   @id @default(cuid())
+  bio       String?
+  avatarUrl String?
+  userId    String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Course {
+  id          String          @id @default(cuid())
+  title       String
+  description String
+  status      CourseStatus    @default(DRAFT)
+  authorId    String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  author         User?         @relation("CourseAuthor", fields: [authorId], references: [id])
+  lessons        Lesson[]
+  enrollments    Enrollment[]
+  resources      Resource[]
+  posts          Post[]
+  certifications Certification[]
+}
+
+model Lesson {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  videoUrl    String?
+  content     String?
+  order       Int      @default(1)
+  courseId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@index([courseId, order])
+  progresses LessonProgress[]
+}
+
+model Enrollment {
+  id          String   @id @default(cuid())
+  userId      String
+  courseId    String
+  progress    Int      @default(0)
+  lastAccessed DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+}
+
+model LessonProgress {
+  id         String   @id @default(cuid())
+  userId     String
+  lessonId   String
+  completedAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+}
+
+model Resource {
+  id          String       @id @default(cuid())
+  title       String
+  description String?
+  type        ResourceType @default(LINK)
+  url         String
+  courseId    String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  authorId  String
+  courseId  String?
+  mediaUrl  String?
+  mediaType String?
+  eventDate DateTime?
+  eventLocation String?
+  shareCount Int    @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  course   Course? @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  comments Comment[]
+  likes    PostLike[]
+
+  @@index([courseId])
+}
+
+model PostLike {
+  id        String   @id @default(cuid())
+  userId    String
+  postId    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  authorId  String
+  postId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model Certification {
+  id              String   @id @default(cuid())
+  certificateCode String   @unique
+  userId          String
+  courseId        String
+  issuedAt        DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+}
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+
+  follower  User @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+}
