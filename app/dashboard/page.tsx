@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 import { redirect } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -5,6 +6,11 @@ import { BookOpen, Calendar, Library, Award, Users, MessageSquare } from "lucide
 import { BottomNav } from "@/components/bottom-nav"
 import { getCurrentUser } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+
+export const dynamic = "force-dynamic"
+export const metadata: Metadata = {
+  title: "Dashboard",
+}
 
 export default async function DashboardPage() {
   const user = await getCurrentUser()
@@ -20,15 +26,15 @@ export default async function DashboardPage() {
 
   const quickActions = [
     {
-      title: "Feed de noticias",
-      description: "Ultimas atualizacoes e novidades",
+      title: "Feed de notícias",
+      description: "Últimas atualizações e novidades",
       icon: MessageSquare,
       href: "/feed",
       color: "bg-accent/10 text-accent-foreground",
     },
     {
       title: "Cursos",
-      description: "Explore cursos e modulos",
+      description: "Explore cursos e módulos",
       icon: BookOpen,
       href: "/courses",
       color: "bg-primary/10 text-primary",
@@ -44,7 +50,7 @@ export default async function DashboardPage() {
       title: "Eventos",
       description: "Palestras e oportunidades",
       icon: Calendar,
-      href: "/feed",
+      href: "/events",
       color: "bg-accent/10 text-accent-foreground",
     },
     {
@@ -56,7 +62,7 @@ export default async function DashboardPage() {
     },
     {
       title: "Comunidade",
-      description: "Foruns e discussoes",
+      description: "Fóruns e discussões",
       icon: Users,
       href: "/feed",
       color: "bg-secondary/10 text-secondary",
@@ -67,7 +73,7 @@ export default async function DashboardPage() {
     <div className="min-h-screen bg-background pb-20 md:pb-0">
       <div className="bg-gradient-to-r from-primary to-secondary p-6 md:p-8 lg:p-10 text-white">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-2">Ola, {user.name || user.email}!</h1>
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-2 text-white">Olá, {user.name || user.email}!</h1>
           <p className="text-white/90 md:text-lg">Bem-vindo(a) ao EDUCONEXA</p>
         </div>
       </div>
@@ -96,7 +102,7 @@ export default async function DashboardPage() {
         </Card>
 
         <div>
-          <h2 className="text-xl md:text-2xl lg:text-3xl font-bold mb-4 md:mb-6 text-foreground">Acesso rapido</h2>
+          <h2 className="text-xl md:text-2xl lg:text-3xl font-bold mb-4 md:mb-6 text-foreground">Acesso rápido</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 md:gap-6">
             {quickActions.map((action) => (
               <Link key={action.title} href={action.href}>

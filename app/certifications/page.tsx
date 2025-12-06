@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import { prisma } from "@/lib/prisma"
 import { getCurrentUser } from "@/lib/auth"
 import { redirect } from "next/navigation"
@@ -30,6 +31,10 @@ const quizCourses = [
   },
 ]
 
+export const metadata: Metadata = {
+  title: "Certificados",
+}
+
 export default async function CertificationsPage() {
   const user = await getCurrentUser()
   if (!user) {
@@ -57,7 +62,7 @@ export default async function CertificationsPage() {
     <div className="min-h-screen bg-background pb-20 md:pb-0">
       <div className="bg-gradient-to-r from-primary to-secondary p-6 md:p-8 lg:p-10 text-white sticky top-0 z-10">
         <div className="max-w-5xl mx-auto">
-          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold">Certificados</h1>
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white">Certificados</h1>
           <p className="text-white/90 text-sm md:text-base lg:text-lg">Responda ao quiz para gerar o certificado.</p>
         </div>
       </div>

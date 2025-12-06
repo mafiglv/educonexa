@@ -7,7 +7,7 @@ const postSchema = z.object({
   title: z.string().min(1),
   content: z.string().min(1),
   courseId: z.string().optional(),
-  mediaUrl: z.string().url().optional(),
+  mediaUrl: z.string().url().or(z.string().startsWith("data:")).optional(),
   mediaType: z.string().optional(),
   eventDate: z.string().datetime().optional(),
   eventLocation: z.string().optional(),

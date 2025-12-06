@@ -116,6 +116,20 @@ async function main() {
     },
   })
 
+  await prisma.post.upsert({
+    where: { id: "seed-event-1" },
+    update: {},
+    create: {
+      id: "seed-event-1",
+      title: "Encontro online da comunidade",
+      content: "Vamos compartilhar experiências sobre inclusão educacional.",
+      authorId: admin.id,
+      eventDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      eventLocation: "Online",
+      mediaUrl: "https://example.com/inscricao",
+    },
+  })
+
   console.log("Seed concluído com sucesso.")
 }
 

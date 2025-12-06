@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -21,12 +22,16 @@ const resources = [
   },
 ]
 
+export const metadata: Metadata = {
+  title: "Biblioteca",
+}
+
 export default function LibraryPage() {
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
       <div className="bg-gradient-to-r from-primary to-secondary p-6 md:p-8 lg:p-10 text-white sticky top-0 z-10">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">Biblioteca</h1>
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 text-white">Biblioteca</h1>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-white/60" />
             <Input

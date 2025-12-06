@@ -4,11 +4,20 @@ import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
 import "./globals.css"
 import { Suspense } from "react"
-import { DesktopNav } from "@/components/desktop-nav"
+import { NavFrame } from "@/components/nav-frame"
 
 export const metadata: Metadata = {
-  title: "EDUCONEXA - Inclusão Educacional",
+  title: {
+    default: "EDUCONEXA - Inclusão Educacional",
+    template: "%s | EDUCONEXA",
+  },
   description: "Plataforma colaborativa para promoção da inclusão educacional",
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
+    other: [{ rel: "icon", url: "/logo.png" }],
+  },
 }
 
 export default function RootLayout({
@@ -19,10 +28,9 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}>
-        <DesktopNav />
-        <div className="md:pt-16 lg:pt-20">
+        <NavFrame>
           <Suspense fallback={null}>{children}</Suspense>
-        </div>
+        </NavFrame>
       </body>
     </html>
   )

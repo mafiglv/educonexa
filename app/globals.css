@@ -4,20 +4,20 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Custom EDUCONEXA theme with teal palette */
+  /* Paleta teal inicial */
   --background: oklch(0.99 0 0);
   --foreground: oklch(0.25 0.05 195);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.25 0.05 195);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.25 0.05 195);
-  --primary: oklch(0.35 0.08 195); /* #1b4d50 - dark teal */
+  --primary: oklch(0.35 0.08 195); /* teal escuro */
   --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.45 0.08 190); /* #1f6f6e - medium teal */
+  --secondary: oklch(0.45 0.08 190);
   --secondary-foreground: oklch(0.99 0 0);
   --muted: oklch(0.96 0.01 195);
   --muted-foreground: oklch(0.55 0.03 195);
-  --accent: oklch(0.75 0.15 185); /* #3ddcca - bright teal */
+  --accent: oklch(0.75 0.15 185);
   --accent-foreground: oklch(0.25 0.05 195);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.99 0 0);
@@ -41,7 +41,7 @@
 }
 
 .dark {
-  /* Dark mode theme for accessibility */
+  /* Dark mode teal */
   --background: oklch(0.15 0.02 195);
   --foreground: oklch(0.95 0.01 195);
   --card: oklch(0.18 0.02 195);
@@ -123,5 +123,12 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  button,
+  [type="button"],
+  [type="submit"],
+  [role="button"],
+  a {
+    cursor: pointer;
   }
 }

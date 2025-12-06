@@ -11,10 +11,10 @@ type SessionPayload = {
 }
 
 function getJwtSecret() {
-  if (!process.env.JWT_SECRET) {
-    throw new Error("JWT_SECRET não configurado")
-  }
-  return process.env.JWT_SECRET
+  if (process.env.JWT_SECRET) return process.env.JWT_SECRET
+  const fallback = "dev-secret-change-me"
+  console.warn("JWT_SECRET nao configurado. Usando fallback de desenvolvimento.")
+  return fallback
 }
 
 export async function hashPassword(password: string) {
@@ -41,7 +41,8 @@ export function verifySession(token: string): SessionPayload | null {
 
 export async function setSessionCookie(userId: string) {
   const token = signSession(userId)
-  cookies().set(SESSION_COOKIE, token, {
+  const cookieStore = await cookies()
+  cookieStore.set(SESSION_COOKIE, token, {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
@@ -51,12 +52,14 @@ export async function setSessionCookie(userId: string) {
   return token
 }
 
-export function clearSessionCookie() {
-  cookies().delete(SESSION_COOKIE)
+export async function clearSessionCookie() {
+  const cookieStore = await cookies()
+  cookieStore.delete(SESSION_COOKIE)
 }
 
 export async function getCurrentUser() {
-  const token = cookies().get(SESSION_COOKIE)?.value
+  const cookieStore = await cookies()
+  const token = cookieStore.get(SESSION_COOKIE)?.value
   if (!token) return null
   const payload = verifySession(token)
   if (!payload?.userId) return null

@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 import { redirect } from "next/navigation"
 import { prisma } from "@/lib/prisma"
@@ -8,6 +9,10 @@ import { Button } from "@/components/ui/button"
 import { BottomNav } from "@/components/bottom-nav"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import AccessibilityCard from "./accessibility-client"
+
+export const metadata: Metadata = {
+  title: "Meu perfil",
+}
 
 export default async function ProfilePage() {
   const user = await getCurrentUser()
@@ -55,9 +60,9 @@ export default async function ProfilePage() {
               <AvatarFallback>{(profileData.name ?? profileData.email)?.[0]?.toUpperCase()}</AvatarFallback>
             </Avatar>
             <div>
-              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold">{profileData.name || "Seu perfil"}</h1>
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white">{profileData.name || "Seu perfil"}</h1>
               <p className="text-white/90 text-sm md:text-base lg:text-lg">{profileData.email}</p>
-              <div className="flex gap-4 mt-2 text-sm">
+              <div className="flex gap-4 mt-2 text-sm text-muted-foreground">
                 <span>{followersCount} seguidores</span>
                 <span>{followingCount} seguindo</span>
               </div>

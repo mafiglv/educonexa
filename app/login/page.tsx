@@ -5,6 +5,7 @@ import type React from "react"
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -42,7 +43,7 @@ export default function LoginPage() {
         const message =
           typeof data?.error === "string"
             ? data.error
-            : "Nao foi possivel autenticar. Verifique os dados e tente novamente."
+            : "Não foi possível autenticar. Verifique os dados e tente novamente."
         setErrorMessage(message)
         return
       }
@@ -66,14 +67,26 @@ export default function LoginPage() {
         </Button>
       </Link>
 
+      <div className="flex items-center justify-center mb-6">
+        <div className="relative h-28 w-72 md:h-32 md:w-80 lg:h-36 lg:w-96">
+          <Image
+            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Logo-GzQBZ2wFuMhLZDI6Xi2if6kJEnF4xO.png"
+            alt="EDUCONEXA"
+            fill
+            className="object-contain"
+            priority
+          />
+        </div>
+      </div>
+
       {/* Login Form */}
       <div className="flex-1 flex items-center justify-center">
-        <Card className="w-full max-w-md lg:max-w-lg">
+        <Card className="w-full max-w-md lg:max-w-lg bg-gradient-to-br from-primary to-secondary text-white border-none shadow-xl">
           <CardHeader className="space-y-2">
-            <CardTitle className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary">
+            <CardTitle className="text-2xl md:text-3xl lg:text-4xl font-bold text-white">
               {isSignup ? "Criar conta" : "Entrar"}
             </CardTitle>
-            <CardDescription className="md:text-base">
+            <CardDescription className="md:text-base text-white/80">
               {isSignup
                 ? "Preencha os dados para criar sua conta"
                 : "Entre com suas credenciais para acessar"}
@@ -83,7 +96,7 @@ export default function LoginPage() {
             <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
               {isSignup && (
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="md:text-base">
+                  <Label htmlFor="name" className="md:text-base text-white">
                     Nome completo
                   </Label>
                   <Input
@@ -93,13 +106,13 @@ export default function LoginPage() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
-                    className="md:h-12 md:text-base"
+                    className="md:h-12 md:text-base bg-white text-slate-900 placeholder:text-slate-500"
                   />
                 </div>
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="email" className="md:text-base">
+                <Label htmlFor="email" className="md:text-base text-white">
                   Email
                 </Label>
                 <Input
@@ -109,12 +122,12 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="md:h-12 md:text-base"
+                  className="md:h-12 md:text-base bg-white text-slate-900 placeholder:text-slate-500"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password" className="md:text-base">
+                <Label htmlFor="password" className="md:text-base text-white">
                   Senha
                 </Label>
                 <Input
@@ -124,7 +137,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="md:h-12 md:text-base"
+                  className="md:h-12 md:text-base bg-white text-slate-900 placeholder:text-slate-500"
                 />
               </div>
 
@@ -134,22 +147,22 @@ export default function LoginPage() {
                 </p>
               )}
 
-              <Button type="submit" className="w-full md:text-lg md:h-12 lg:h-14" size="lg" disabled={loading}>
+              <Button type="submit" className="w-full md:text-lg md:h-12 lg:h-14 bg-white text-primary hover:bg-white/90" size="lg" disabled={loading}>
                 {loading ? "Processando..." : isSignup ? "Criar conta" : "Entrar"}
               </Button>
 
-              <div className="text-center text-sm md:text-base">
+              <div className="text-center text-sm md:text-base text-white/90">
                 {isSignup ? (
-                  <p className="text-muted-foreground">
-                    Ja tem uma conta?{" "}
-                    <Link href="/login" className="text-primary font-semibold hover:underline">
+                  <p className="text-white/80">
+                    Já tem uma conta?{" "}
+                    <Link href="/login" className="text-white font-semibold hover:underline">
                       Entrar
                     </Link>
                   </p>
                 ) : (
-                  <p className="text-muted-foreground">
-                    Nao tem uma conta?{" "}
-                    <Link href="/login?signup=true" className="text-primary font-semibold hover:underline">
+                  <p className="text-white/80">
+                    Não tem uma conta?{" "}
+                    <Link href="/login?signup=true" className="text-white font-semibold hover:underline">
                       Criar conta
                     </Link>
                   </p>
@@ -162,3 +175,4 @@ export default function LoginPage() {
     </div>
   )
 }
+

@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Newspaper, BookOpen, Award, User, Library } from "lucide-react"
+import { Home, Newspaper, BookOpen, Award, User, Library, Calendar } from "lucide-react"
 import Image from "next/image"
 
 export function DesktopNav() {
@@ -18,6 +18,7 @@ export function DesktopNav() {
     { href: "/feed", icon: Newspaper, label: "Feed" },
     { href: "/courses", icon: BookOpen, label: "Cursos" },
     { href: "/library", icon: Library, label: "Biblioteca" },
+    { href: "/events", icon: Calendar, label: "Eventos" },
     { href: "/certifications", icon: Award, label: "Certificados" },
     { href: "/profile", icon: User, label: "Perfil" },
   ]
@@ -28,7 +29,7 @@ export function DesktopNav() {
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="relative h-8 w-32 lg:h-10 lg:w-40">
+            <div className="relative h-12 w-44 lg:h-14 lg:w-56">
               <Image
                 src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Logo-GzQBZ2wFuMhLZDI6Xi2if6kJEnF4xO.png"
                 alt="EDUCONEXA"

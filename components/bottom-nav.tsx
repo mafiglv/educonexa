@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Newspaper, BookOpen, Award, User } from "lucide-react"
+import { Home, Newspaper, BookOpen, Award, User, Calendar } from "lucide-react"
 
 export function BottomNav() {
   const pathname = usePathname()
@@ -11,6 +11,7 @@ export function BottomNav() {
     { href: "/dashboard", icon: Home, label: "Início" },
     { href: "/feed", icon: Newspaper, label: "Feed" },
     { href: "/courses", icon: BookOpen, label: "Cursos" },
+    { href: "/events", icon: Calendar, label: "Eventos" },
     { href: "/certifications", icon: Award, label: "Certificados" },
     { href: "/profile", icon: User, label: "Perfil" },
   ]

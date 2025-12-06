@@ -1,8 +1,12 @@
+import type { Metadata } from "next"
 import { redirect } from "next/navigation"
-import { BottomNav } from "@/components/bottom-nav"
 import { prisma } from "@/lib/prisma"
 import { getCurrentUser } from "@/lib/auth"
 import FeedClient, { type FeedPost } from "./feed-client"
+
+export const metadata: Metadata = {
+  title: "Feed",
+}
 
 export default async function FeedPage() {
   const user = await getCurrentUser()
@@ -10,31 +14,36 @@ export default async function FeedPage() {
     redirect("/login")
   }
 
-  const postsData = await prisma.post.findMany({
-    include: {
-      author: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          profile: { select: { avatarUrl: true, bio: true } },
+  const [postsData, following] = await Promise.all([
+    prisma.post.findMany({
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            profile: { select: { avatarUrl: true, bio: true } },
+          },
         },
-      },
-      comments: {
-        select: {
-          id: true,
-          content: true,
-          createdAt: true,
-          author: { select: { id: true, name: true, email: true } },
+        comments: {
+          select: {
+            id: true,
+            content: true,
+            createdAt: true,
+            author: { select: { id: true, name: true, email: true } },
+          },
+          orderBy: { createdAt: "asc" },
         },
-        orderBy: { createdAt: "asc" },
+        likes: { select: { userId: true } },
+        _count: { select: { comments: true, likes: true } },
       },
-      likes: { select: { userId: true } },
-      _count: { select: { comments: true, likes: true } },
-    },
-    orderBy: { createdAt: "desc" },
-    take: 30,
-  })
+      orderBy: { createdAt: "desc" },
+      take: 30,
+    }),
+    prisma.follow.findMany({ where: { followerId: user.id }, select: { followingId: true } }),
+  ])
+
+  const followingIds = new Set(following.map((f) => f.followingId))
 
   const posts: FeedPost[] = postsData.map((p) => ({
     id: p.id,
@@ -61,12 +70,13 @@ export default async function FeedPage() {
     likesCount: p._count.likes,
     likedByCurrent: p.likes.some((l) => l.userId === user.id),
     shareCount: p.shareCount,
+    isFollowingAuthor: followingIds.has(p.author.id),
+    isSelf: p.author.id === user.id,
   }))
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
       <FeedClient currentUserId={user.id} initialPosts={posts} />
-      <BottomNav />
     </div>
   )
 }

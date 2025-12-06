@@ -24,6 +24,8 @@ export type FeedPost = {
   likesCount: number
   likedByCurrent: boolean
   shareCount: number
+  isFollowingAuthor?: boolean
+  isSelf?: boolean
 }
 
 type Props = {
@@ -39,6 +41,7 @@ export default function FeedClient({ initialPosts }: Props) {
   const [mediaType, setMediaType] = useState("")
   const [eventDate, setEventDate] = useState("")
   const [eventLocation, setEventLocation] = useState("")
+  const [fileName, setFileName] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -74,6 +77,7 @@ export default function FeedClient({ initialPosts }: Props) {
       setMediaType("")
       setEventDate("")
       setEventLocation("")
+      setFileName("")
     } catch (err) {
       console.error(err)
       setError("Erro inesperado. Tente novamente.")
@@ -94,6 +98,26 @@ export default function FeedClient({ initialPosts }: Props) {
                 ...p,
                 likedByCurrent: !liked,
                 likesCount: p.likesCount + (liked ? -1 : 1),
+              }
+            : p,
+        ),
+      )
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  const toggleFollow = async (authorId: string, isFollowing: boolean) => {
+    try {
+      const method = isFollowing ? "DELETE" : "POST"
+      const res = await fetch(`/api/users/${authorId}/follow`, { method })
+      if (!res.ok) return
+      setPosts((prev) =>
+        prev.map((p) =>
+          p.author.id === authorId
+            ? {
+                ...p,
+                isFollowingAuthor: !isFollowing,
               }
             : p,
         ),
@@ -151,7 +175,7 @@ export default function FeedClient({ initialPosts }: Props) {
     <div>
       <div className="bg-gradient-to-r from-primary to-secondary p-6 md:p-8 lg:p-10 text-white sticky top-0 z-10">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold">Feed</h1>
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white">Feed</h1>
           <p className="text-white/90 text-sm md:text-base lg:text-lg">Publique e acompanhe a comunidade</p>
         </div>
       </div>
@@ -200,6 +224,27 @@ export default function FeedClient({ initialPosts }: Props) {
                   value={eventLocation}
                   onChange={(e) => setEventLocation(e.target.value)}
                 />
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm text-muted-foreground">Ou envie uma imagem/vídeo do dispositivo</label>
+                  <Input
+                    type="file"
+                    accept="image/*,video/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0]
+                      if (!file) return
+                      const reader = new FileReader()
+                      reader.onload = () => {
+                        if (typeof reader.result === "string") {
+                          setMediaUrl(reader.result)
+                          setMediaType(file.type || "UPLOAD")
+                          setFileName(file.name)
+                        }
+                      }
+                      reader.readAsDataURL(file)
+                    }}
+                  />
+                  {fileName && <p className="text-xs text-muted-foreground">Selecionado: {fileName}</p>}
+                </div>
               </div>
               {error && <p className="text-sm text-destructive">{error}</p>}
               <Button type="submit" disabled={loading} className="w-full md:w-auto">
@@ -228,9 +273,20 @@ export default function FeedClient({ initialPosts }: Props) {
                   </Link>
                   <span className="text-xs text-muted-foreground">{post.author.email}</span>
                 </div>
-                <Badge variant="secondary" className="bg-accent/20 text-accent-foreground text-xs md:text-sm">
-                  Post
-                </Badge>
+                <div className="flex items-center gap-2">
+                  {!post.isSelf && (
+                    <Button
+                      size="sm"
+                      variant={post.isFollowingAuthor ? "outline" : "default"}
+                      onClick={() => toggleFollow(post.author.id, post.isFollowingAuthor ?? false)}
+                    >
+                      {post.isFollowingAuthor ? "Seguindo" : "Seguir"}
+                    </Button>
+                  )}
+                  <Badge variant="secondary" className="bg-accent/20 text-accent-foreground text-xs md:text-sm">
+                    Post
+                  </Badge>
+                </div>
               </div>
               <CardTitle className="text-lg md:text-xl leading-tight">{post.title}</CardTitle>
               <CardDescription className="text-sm md:text-base leading-relaxed whitespace-pre-wrap">
@@ -248,6 +304,9 @@ export default function FeedClient({ initialPosts }: Props) {
                         title={post.title}
                       />
                     </div>
+                  ) : post.mediaUrl.startsWith("data:") ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={post.mediaUrl} alt={post.title} className="w-full rounded-lg border border-border/70" />
                   ) : (
                     <a href={post.mediaUrl} className="text-primary underline break-all" target="_blank" rel="noreferrer">
                       {post.mediaUrl}
@@ -257,7 +316,7 @@ export default function FeedClient({ initialPosts }: Props) {
               )}
               {post.eventDate && (
                 <div className="mt-2 text-xs text-muted-foreground">
-                  Evento: {new Date(post.eventDate).toLocaleString("pt-BR")} {post.eventLocation && `· ${post.eventLocation}`}
+                  Evento: {new Date(post.eventDate).toLocaleString("pt-BR")} {post.eventLocation && `• ${post.eventLocation}`}
                 </div>
               )}
             </CardHeader>
@@ -277,7 +336,7 @@ export default function FeedClient({ initialPosts }: Props) {
                     className="flex items-center gap-2 hover:text-primary transition-colors"
                     onClick={() => toggleLike(post.id, post.likedByCurrent)}
                   >
-                    <span>{post.likedByCurrent ? "💙" : "🤍"}</span>
+                    <span>{post.likedByCurrent ? "❤" : "♡"}</span>
                     <span className="text-xs md:text-sm">{post.likesCount}</span>
                   </button>
                   <div className="flex items-center gap-2">

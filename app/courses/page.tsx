@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import { redirect } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import { getCurrentUser } from "@/lib/auth"
@@ -47,6 +48,10 @@ const courseData = [
     ],
   },
 ]
+
+export const metadata: Metadata = {
+  title: "Cursos",
+}
 
 export default async function CoursesPage() {
   const user = await getCurrentUser()

@@ -48,7 +48,7 @@ model User {
 model Profile {
   id        String   @id @default(cuid())
   bio       String?
-  avatarUrl String?
+  avatarUrl String?  @db.LongText
   userId    String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -136,7 +136,7 @@ model Post {
   content   String
   authorId  String
   courseId  String?
-  mediaUrl  String?
+  mediaUrl  String?  @db.LongText
   mediaType String?
   eventDate DateTime?
   eventLocation String?
